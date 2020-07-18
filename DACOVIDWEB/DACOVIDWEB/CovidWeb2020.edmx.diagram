@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="06cd6cbb81774cb5b557c2a30a6a0fab" Name="Diagram1">
+        <EntityTypeShape EntityType="ProyectoCovidDAW2020Model.sysdiagrams" Width="1.5" PointX="0.75" PointY="9.375" />
+        <EntityTypeShape EntityType="ProyectoCovidDAW2020Model.tbl_category_donation" Width="1.5" PointX="6" PointY="0.75" />
+        <EntityTypeShape EntityType="ProyectoCovidDAW2020Model.tbl_category_symptoms" Width="1.5" PointX="5.75" PointY="8.625" />
+        <EntityTypeShape EntityType="ProyectoCovidDAW2020Model.tbl_donation" Width="1.5" PointX="8.125" PointY="3.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ProyectoCovidDAW2020Model.tbl_role" Width="1.5" PointX="0.75" PointY="4.875" />
+        <EntityTypeShape EntityType="ProyectoCovidDAW2020Model.tbl_symptoms" Width="1.5" PointX="8" PointY="8.5" />
+        <EntityTypeShape EntityType="ProyectoCovidDAW2020Model.tbl_user" Width="1.5" PointX="3" PointY="3.875" />
+        <EntityTypeShape EntityType="ProyectoCovidDAW2020Model.tbl_user_attribute" Width="1.5" PointX="5.25" PointY="4.625" />
+        <AssociationConnector Association="ProyectoCovidDAW2020Model.FK_tbl_donation_tbl_category_donation" />
+        <AssociationConnector Association="ProyectoCovidDAW2020Model.FK_tbl_symptoms_tbl_category_symptoms" />
+        <AssociationConnector Association="ProyectoCovidDAW2020Model.FK_tbl_donation_tbl_user" />
+        <AssociationConnector Association="ProyectoCovidDAW2020Model.FK_tbl_donation_tbl_user1" />
+        <AssociationConnector Association="ProyectoCovidDAW2020Model.FK_tbl_user_tbl_role" />
+        <AssociationConnector Association="ProyectoCovidDAW2020Model.FK_tbl_user_attribute_tbl_user" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -1,0 +1,226 @@
+﻿
+@{
+    ViewBag.Title = "RegisterPersons";
+}
+
+<form style="padding: 30px">
+
+
+    <input type="hidden" name="state" value="">
+
+    <div>
+        <h2 class="form-group col-md">Registro de personas en pobreza o pobreza extrema   </h2>
+
+        <div class="form-group col-md-6">
+
+            <label for="txtIDPat" class="col-form-label">Ingrese nombre de la persona  </label>
+            <input type="text" name="txtName" id="txtName" class="form-control" placeholder="Nombres">
+
+        </div>
+
+        <div class="form-group col-md-6">
+
+            <label for="txtIDPat" class="col-form-label">Ingrese apellidos de la persona</label>
+
+            <input type="text" name="txtSurname" id="txtSurname" class="form-control" placeholder="Apellidos">
+
+        </div>
+
+        <div class="form-group col-md-6">
+
+            <label for="txtIDPat" class="col-form-label">Ingrese DNI de la persona</label>
+            <input type="text" name="txtDNI" id="txtDNI" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="DNI" maxlength="9">
+
+        </div>
+
+        <div class="form-group col-md-6">
+
+            <label for="txtIDPat" class="col-form-label">Ingrese fecha de nacimiento de la persona: </label>
+            <input type="date" name="txtDate" id="txtDate" class="form-control">
+
+        </div>
+
+
+        <div class="form-group col-md-6">
+
+            <label for="txtIDPat" class="col-form-label">Ingrese la dirección de la persona</label>
+
+            <input type="text" name="txtAddress" id="txtAddress" class="form-control" placeholder="Dirección">
+
+        </div>
+
+        <div class="form-group col-md-6">
+
+            <label for="txtIDPat" class="col-form-label">Ingrese télefono de la persona</label>
+
+            <input type="text" name="txtPhone" id="txtPhone" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Dirección" maxlength="9">
+
+        </div>
+
+
+
+
+        <div class="form-group col-md-6">
+
+            <label for="txtIDPat" class="col-form-label">Pobreza extrema</label>
+            <br />
+            <label class="switch">
+                <input id="chkPobre" type="checkbox">
+                <span class="slider round"></span>
+            </label>
+
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" id="btnRegister" class="btn btn-primary">Agregar persona</button>
+    </div>
+
+
+
+</form>
+
+<script>
+
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth() + 1;
+    var yyyy = today.getFullYear();
+    var HH = today.getHours();
+    var i = today.getMinutes();
+
+    if (dd < 10) {
+        dd = '0' + dd
+    }
+    if (mm < 10) {
+        mm = '0' + mm
+    }
+    if (i.toString().length === 1) {
+        i = "0" + i;
+    }
+    today = yyyy + '-' + mm + '-' + dd
+    document.getElementById("txtDate").setAttribute("max", today);
+
+
+    $("#btnRegister").click(function () {
+
+      
+        var dni = $("#txtDNI").val();
+        //  var pass = $("#txtPassword").val();
+        var name = $("#txtName").val();
+
+        var fech = $("#txtDate").val();
+
+        var surname = $("#txtSurname").val();
+
+        var address = $("#txtAddress").val();
+
+        var phone = $("#txtPhone").val();
+        console.log(address)
+
+        if (dni == "" || name == "" || surname == "" || address == "" || phone == "" || fech == "") {
+            swal("Error", "Complete todos los campos");
+            return;
+        }
+
+        if (isNaN(parseInt(dni))) {
+            swal("Error", "Solo se aceptan numeros en el campo DNI");
+            return;
+        }
+        if (isNaN(parseInt(phone))) {
+            swal("Error", "Solo se aceptan numeros en el campo teléfono");
+            return;
+        }
+        var pobre = "0";
+
+        if (document.getElementById('chkPobre').checked) {
+           var pobre = "1"
+        } 
+
+        var date = new Date().toLocaleString();
+        var user = { name: name, surname: surname, address: address, fecha_nacimiento: fech, phone: phone, DNI: dni, password: "-", tbl_role_id: 3, created_by: "web", state: 2 };
+        var attributes = { alias: "pobreza_extrema", value: pobre , created_by : "web"}
+        var body = JSON.stringify({ user: user });
+
+
+        $.ajax({
+            type: "POST",
+            url: "/Web/Person/Register",
+            data: {
+                user: user,
+                userAttribute: attributes
+            },
+            cache: true,
+            success: function (data) {
+                if (data) {
+                    swal("Bien hecho", "Persona registrada correctamente", "success");
+
+                }
+            }
+        });
+
+
+    });
+
+</script>
+<style>
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+    input:checked + .slider {
+        background-color: #2196F3;
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+        border-radius: 34px;
+    }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+</style>

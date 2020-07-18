@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Login V8</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--===============================================================================================-->
+
+</head>
+
+<body>
+
+
+
+
+    <div class="limiter">
+
+        <div style="background: url(https://images-ext-2.discordapp.net/external/cI0nAqVccniprPIk9OE_ZzHw_0Hh-lBON31VTmgkIKw/%3Fw%3D1600%26h%3D1128/https/static.nationalgeographicla.com/files/styles/image_3200/public/coronavirus-mapa-tiempo-real-18-de-marzo-mapa.png?width=960&height=677)" class="container-login100">
+            <div class="wrap-login100">
+                <form class="login100-form validate-form p-l-55 p-r-55 p-t-178">
+                    <span style="background-color: darkred" class="login100-form-title">
+                        Iniciar sesión
+                    </span>
+
+
+                    <div class="wrap-input100 validate-input m-b-16" data-validate="Please enter username">
+                        <input class="input100" type="text" name="txtDNI" id="txtDNI" placeholder="DNI" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" >
+                        <span class="focus-input100"></span>
+                    </div>
+
+                    <div class="wrap-input100 validate-input" data-validate="Please enter password">
+                        <input class="input100" type="password" name="txtPassword" id="txtPassword" placeholder="Contraseña">
+                        <span class="focus-input100"></span>
+                    </div>
+
+                    <div class="text-right p-t-13 p-b-23">
+
+
+
+                    </div>
+
+                    <div class="container-login100-form-btn">
+                        <button   type="button" id="btnLogin" style="background-color: indianred" class="login100-form-btn">
+                            Sign in
+                        </button>
+                    </div>
+
+                    <div class="flex-col-c p-t-170 p-b-40">
+                        <span class="txt1 p-b-9">
+                            Aun no es usuario?
+                        </span>
+
+                        <a href="/Home/Register" style="color:dodgerblue" id="btnRegister" class="txt3">
+                            Registrese ahora
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+</body>
+</html>
+
+<script>
+
+
+
+
+
+    $("#btnLogin").click(function () {
+
+        var dni = $("#txtDNI").val();
+        var pass = $("#txtPassword").val();
+
+        if (dni == "" || pass == "") {
+
+            swal("Error", "Complete todos los campos");
+
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/Home/Login",
+            data: {
+                   dni: dni,
+                    pass: pass
+            },
+            cache: true,
+            success: function (data) {
+                console.log(data)
+                if (data.isLogin) {
+
+                    if (data.idRole == 1) {
+                        window.location.href = "/Administrador/Principal"
+                    } else {
+                        window.location.href = "/Web/Principal"
+
+                    }
+
+                } else {
+                    swal("Error", "Usuario o contraseña incorrecta");
+
+
+                }
+                
+
+            }
+        });
+
+
+    });
+
+</script>

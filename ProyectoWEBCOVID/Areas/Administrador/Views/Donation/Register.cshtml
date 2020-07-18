@@ -1,0 +1,122 @@
+﻿
+@{
+    ViewBag.Title = "RegisterDonation";
+}
+
+
+
+<form style="padding: 30px">
+
+
+    <input type="hidden" name="state" value="">
+
+    <div>
+        <h2 class="form-group col-md">Registro de donaciones </h2>
+
+
+        <div class="form-group col-md-6">
+            <label for="txtIDPat" class="col-form-label">Ingrese el tipo de donación </label>
+
+            <select id="cboCategory" class="form-control">
+                <option value="-1">Seleccione</option>
+
+            </select>
+        </div>
+
+
+        <div class="form-group col-md-6">
+
+            <label for="txtIDPat" class="col-form-label">Ingrese detalles de tu donación </label>
+            <input type="text" name="txtDescription" id="txtDescription" class="form-control" placeholder="Descripcion">
+
+        </div>
+
+
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" id="btnRegister" class="btn btn-primary">Registrar donación</button>
+    </div>
+
+
+
+</form>
+
+<script>
+
+    setCategoriesDonation();
+
+    $("#btnRegister").click(function () {
+
+        var description = $("#txtDescription").val();
+        //  var pass = $("#txtPassword").val();
+        var e = $("#cboCategory");
+
+        var categoryId = e.val();
+
+        if (categoryId == -1) {
+
+            swal("Error", "Complete todos los campos");
+            return;
+
+        }
+
+        if (description == "" ) {
+            swal("Error", "Complete todos los campos");
+            return;
+        }
+
+
+
+
+
+
+        var id = 2;
+
+        var bodyPost = { created_by: "web", tbl_user_id: id, description: description, state: 2, tbl_category_donation_id: parseInt(categoryId)  };
+        $.ajax({
+            type: "POST",
+            url: "/Administrador/Donation/Register",
+            data: bodyPost,
+            cache: true,
+            success: function (data) {
+                if (data) {
+                    swal("Bien hecho", "Donación registrada!!", "success");
+
+                    $("#txtDescription").val("");
+
+
+                } else {
+                    swal("Error", "Sucedio un error");
+
+                }
+            }
+        });
+
+
+    });
+ 
+
+    function setCategoriesDonation() {
+
+        $.ajax({
+            type: "GET",
+            url: "/Administrador/Donation/Categories",
+            cache: true,
+            success: function (data) {
+                if (data) {
+
+                    var vComboCategory = $("#cboCategory");
+                    $.each(data, function (i, obj) {
+                        $("<option>", {
+                            value: obj.id
+                        }).html(obj.name).appendTo(vComboCategory);
+                    });
+
+                }
+            }
+        });
+    }
+
+</script>

@@ -1,0 +1,221 @@
+﻿@using DACOVIDWEB;
+@{
+    ViewBag.Title = "Donations";
+    List<DACOVIDWEB.tbl_donation> donations = ViewBag.listDonations;
+    var state = "Sin confirmar";
+
+
+}
+
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Listado de donaciones</h1>
+    <p class="mb-4">Donaciones para entregar</a>.</p>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Donaciones</h6>
+        </div>
+        <div class="card-body">
+            <div id="divListado" class="table-responsive">
+                @if(donations.Count() > 0 ) { 
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Donante</th>
+                            <th>Beneficiario</th>
+                            <th>Tipo de donación</th>
+                            <th>Descripción</th>
+                            <th>Dirección de entrega</th>
+                            <th>Fecha de asignación</th>
+                            <th>Fecha entregada</th>
+                            <th>Confirmar entrega</th>
+                            <th>Estado</th>
+
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Donante</th>
+                            <th>Beneficiario</th>
+                            <th>Tipo de donación</th>
+                            <th>Descripción</th>
+                            <th>Dirección de entrega</th>
+                            <th>Fecha de asignación</th>
+                            <th>Fecha entregada</th>
+                            <th>Confirmar entrega</th>
+                            <th>Estado</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        @{foreach (var donation in donations)
+                            {
+                                String donant = donation.tbl_user.name + " " + donation.tbl_user.surname;
+
+                                String person = "";
+                                String delivery = "-";
+
+                                if (donation.state == 4)
+                                {
+                                    state = "Entrega pendiente";
+                                    person = donation.tbl_user1.name.ToString() + " " + @donation.tbl_user1.surname;
+                                }
+                                if (donation.state == 1)
+                                {
+                                    state = "Entregado";
+                                    person = donation.tbl_user1.name.ToString() + " " + @donation.tbl_user1.surname;
+                                    delivery = donation.fecha_delivery.ToString();
+                                }
+                                <tr>
+                                    <td>@donant</td>
+                                    <td>
+                                            @person
+                                    </td>
+
+                                    <td>@donation.tbl_category_donation.name</td>
+                                     <td>@donation.description</td>
+                                     <td>@donation.tbl_user1.address</td>
+                                    <td>@donation.fecha_assign</td>
+                                    
+                                    <td>
+                                        @if (donation.state == 1)
+                                        {
+                                            @donation.fecha_delivery
+                                        }
+                                        else
+                                        {
+                                          @delivery
+                                        }
+
+                                    </td>
+
+                                    <td>
+                                        
+
+                                        @if (donation.state == 4)
+                                        {
+                                            <input type="button" data-iddonation="@donation.id" id="btnConfirm" class="btnConfirm btn btn-info" value="Confirmar entrega" />
+
+                                        }
+                                        else
+                                        {
+                                            <input disabled type="button" data-iddonation="@donation.id" id="btnConfirm" class="btnConfirm btn btn-info" value="Entrega confirmada" />
+
+                                        }
+
+                                        
+                                    </td>
+
+                                    
+                                    <td>
+                                        @state
+                                    </td>
+                                </tr>
+
+                            }
+                        }
+                    </tbody>
+                </table>
+                }
+                else
+                {
+                    <h5>Aun no hay donaciones por entregar</h5>
+
+                 }
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+</div>
+
+
+
+
+
+<div class="modal fade " id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirmar donación</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+
+            <div class="modal-body">Presiona en confirmar para cambiar el estado de la donación a a confirmado.</div>
+            <input type="hidden" id="txtIdDonation" value="-1" />
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="btnConfirmDonation" class="btn btn-primary">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+
+
+
+    $("#divListado").on("click", ".btnConfirm", function () {
+
+        var form = $("#modalConfirm");
+        var vIdDonation = $(this).attr("data-iddonation");
+
+        form.modal("show");
+        form.find("#txtIdDonation").val(vIdDonation)
+
+
+    });
+
+    $("#btnConfirmDonation").click(function () {
+
+            var vIdDonation = $("#txtIdDonation").val();
+
+            $.ajax({
+                type: "POST",
+                url: "/Administrador/Donation/Delivery",
+                cache: false,
+                data: {
+                    idDonation: vIdDonation,
+
+                },
+                success: function (data) {
+                    if (data) {
+                        swal("Bien hecho", "Donación entregada!!", "success");
+                        $("#modalConfirm").modal("toggle");
+
+                        var delayInMilliseconds = 1500; //1 second
+
+                        setTimeout(function () {
+
+                            location.reload(true);
+
+                        }, delayInMilliseconds);
+
+                    } else {
+
+                        swal("Error", "Algo salio mal");
+
+                    }
+                }
+            });
+
+        });
+
+  
+    
+
+</script>

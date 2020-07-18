@@ -1,0 +1,315 @@
+﻿@using DACOVIDWEB;
+@{
+    ViewBag.Title = "Donations";
+    List<DACOVIDWEB.tbl_donation> donations = ViewBag.listDonations;
+    var state = "Sin confirmar";
+
+
+}
+
+
+<!-- Begin Page Content -->
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+        <h1 class="h3 mb-2 text-gray-800">Listado de donaciones</h1>
+        <p class="mb-4">Donaciones registradas por los usarios</a>.</p>
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Donaciones</h6>
+            </div>
+            <div class="card-body">
+                <div id="divListado" class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Donante</th>
+                                <th>Beneficiario</th>
+                                <th>Tipo de donación</th>
+                                <th>Fecha de registro</th>
+                                <th>Estado</th>
+                                <th>Confirmar</th>
+
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>Donante</th>
+                                <th>Beneficiario</th>
+                                <th>Tipo de donación</th>
+                                <th>Fecha de registro</th>
+                                <th>Estado</th>
+                                <th>Confirmar</th>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            @{foreach (var donation in donations)
+                                {
+                                    String person = "";
+                                    if (donation.state == 2)
+                                    {
+                                        state = "Por confirmar";
+                                    }
+                                    if (donation.state == 3)
+                                    {
+                                        state = "Confirmado";
+                                    }
+                                    if (donation.state == 4)
+                                    {
+                                        state = "Entrega pendiente";
+                                        person = donation.tbl_user1.name.ToString() + " " + @donation.tbl_user1.surname;
+                                    }
+                                    if (donation.state == 1)
+                                    {
+                                        state = "Entregado";
+                                        person = donation.tbl_user1.name.ToString() + " " + @donation.tbl_user1.surname;
+                                    }
+                                    <tr>
+                                        <td>@donation.tbl_user.name</td>
+                                        <td>
+                                            @if (donation.state == 2)
+                                            {
+                                                <input disabled type="button" data-idDonation="@donation.id" id="btnAddPerson" class="btnConfirm btn btn-info" value="Agregar beneficiario" />
+
+                                            }
+                                            else if (donation.state == 3)
+                                            {
+                                                <input type="button" data-idDonation="@donation.id" id="btnAddPerson" class="btnAddPerson btn btn-info" value="Agregar beneficiario" />
+
+                                            }
+                                            else if (donation.state == 1 || donation.state == 4)
+                                            {
+
+                                                @person
+
+                                            }
+
+                                        </td>
+
+                                        <td>@donation.tbl_category_donation.name</td>
+
+                                        <td>@donation.created_at</td>
+                                        <td>
+                                            @state
+                                        </td>
+                                        <td>
+                                            @if (donation.state == 2)
+                                            {
+                                                <input type="button" data-iddonation="@donation.id" id="btnConfirm" class="btnConfirm btn btn-info" value="Confirmar" />
+
+                                            }
+                                            else
+                                            {
+                                                <input disabled type="button" data-iddonation="@donation.id" id="btnConfirm" class="btnConfirm btn btn-info" value="Confirmado" />
+
+                                            }
+
+                                        </td>
+                                    </tr>
+
+                                }
+                            }
+                        </tbody>
+                    </table>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+      
+
+    </div>
+
+
+
+
+
+<div class="modal fade " id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirmar donación</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+
+            <div class="modal-body">Presiona en confirmar para cambiar el estado de la donación a a confirmado.</div>
+            <input type="hidden" id="txtIdDonation" value="-1" />
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="btnConfirmDonation" class="btn btn-primary">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade " id="modalAddPerson" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirmar donación</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group col-md">
+                    <label for="txtIDPat" class="col-form-label">Seleccione la persona a donar: </label>
+
+                    <select id="cboPersons" class="form-control">
+                        <option value="-1">Seleccione</option>
+                    </select>
+
+                    <div id="divListadoPersons">
+
+                    </div>
+                   
+                </div>
+
+
+
+            </div>
+            <input type="hidden" id="txtIdPersonAdd" value="-1" />
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="btnAddDonationPerson" class="btn btn-primary">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    setPersons();
+
+    $("#divListado").on("click", ".btnConfirm", function () {
+
+        var form = $("#modalConfirm");
+        var vIdDonation = $(this).attr("data-iddonation");
+
+        form.modal("show");
+        form.find("#txtIdDonation").val(vIdDonation)
+
+
+    });
+
+
+
+    $("#divListado").on("click", ".btnAddPerson", function () {
+
+        var form = $("#modalAddPerson");
+        var vIdDonation = $(this).attr("data-idDonation");
+
+        form.modal("show");
+        form.find("#txtIdPersonAdd").val(vIdDonation)
+
+
+    });
+
+    $("#btnAddDonationPerson").click(function () {
+
+        var vIdDonation = $("#txtIdPersonAdd").val();
+
+        var vIdPerson = $("#cboPersons").val();
+   
+     
+
+        $.ajax({
+            type: "POST",
+            url: "/Web/Donation/AssignDonation",
+            cache: false,
+            data: {
+                idDonation: vIdDonation,
+                idPerson: vIdPerson
+            },
+            success: function (data) {
+                if (data) {
+                    swal("Bien hecho", "Donación asignada!!", "success");
+                    $("#modalAddPerson").modal("toggle");
+
+                    var delayInMilliseconds = 1500;
+
+                    setTimeout(function () {
+
+                        location.reload(true);
+
+                    }, delayInMilliseconds);
+
+                } else {
+                    swal("Error", "Algo salio mal");
+
+                }
+            }
+        });
+
+    });
+
+    $("#btnConfirmDonation").click(function () {
+
+        var vIdDonation = $("#txtIdDonation").val();
+
+        $.ajax({
+            type: "POST",
+            url: "/Web/Donation/Confirm",
+            cache: false,
+            data: {
+                idDonation: vIdDonation,
+               
+            },
+            success: function (data) {
+                if (data) {
+                    swal("Bien hecho", "Donación confirmada!!", "success");
+                    $("#modalConfirm").modal("toggle");
+
+                    var delayInMilliseconds = 1500; //1 second
+
+                    setTimeout(function () {
+
+                        location.reload(true);
+
+                    }, delayInMilliseconds);
+
+
+                } else {
+                    swal("Error", "Algo salio mal");
+
+                }
+            }
+        });
+
+    });
+
+
+
+    function setPersons() {
+
+        $.ajax({
+            type: "GET",
+            url: "/Web/Donation/Persons",
+            cache: true,
+            success: function (data) {
+                if (data) {
+
+                    var vComboPersons = $("#cboPersons");
+                    $.each(data, function (i, obj) {
+                        $("<option>", {
+                            value: obj.id
+                        }).html(obj.name + " "+ obj.surname).appendTo(vComboPersons);
+                    });
+
+                }
+            }
+        });
+    }
+
+</script>
